@@ -1,5 +1,7 @@
 import express from "express";
+import bodyParser from "body-parser";
 import cors from "cors";
+import data from './data.json';
 
 // Defines the port the app will run on. Defaults to 8080, but can be overridden
 // when starting the server. Example command to overwrite PORT env variable value:
@@ -15,6 +17,25 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Hello Technigo!");
 });
+
+app.get('/nominations', (req, res) => {
+  res.json(data)
+})
+
+app.get('/year/:year', (req, res) => {
+  const year = req.params.year;
+  console.log({year});
+  let nominationsFromYear = data.filter((item) => item.year_award.toString() === year);
+  const showWon = req.query.win;
+  console.log(showWon);
+  res.json(nominationsFromYear);
+
+  if (showWon) {
+    nominationsFromYear = nominationsFromYear.filter((item) => item.win)
+  }
+});
+
+//Query-variable ex: ?won=true&this&that
 
 // Start the server
 app.listen(port, () => {
